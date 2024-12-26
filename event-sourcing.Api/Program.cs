@@ -1,13 +1,10 @@
 using event_sourcing.Domain.PayrollLoan;
 using event_sourcing.Infrastructure.AppStartup;
-using EventStore.Client;
-using Microsoft.AspNetCore.Http;
-using NSwag;
-using NSwag.Generation.Processors.Security;
+using MediatR;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddEventStoreDb();
+builder.Services.AddEventStoreDb(builder.Configuration);
 builder.Services.AddScoped<PayrollLoansRepository>();
 
 builder.Services.AddControllers();
@@ -18,6 +15,9 @@ builder.Services.AddSwaggerDocument(config =>
     config.Version = "v1";
     config.Description = "API for managing payroll loans using event sourcing";
 });
+
+// Add MediatR
+builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(Program).Assembly));
 
 var app = builder.Build();
 

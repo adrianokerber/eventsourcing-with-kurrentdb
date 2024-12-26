@@ -10,3 +10,29 @@ docker start esdb-node
 ```
 
 Access via `http://localhost:2113/`
+
+## API Endpoints
+
+### Create Payroll Loan Event
+
+```bash
+curl -X POST http://localhost:5170/api/payroll-loans \
+  -H "Content-Type: application/json" \
+  -d '{
+    "id": "loan-123",
+    "type": "PayrollLoanCreated",
+    "data": "{\"amount\": 1000, \"interestRate\": 2.5, \"termMonths\": 12}",
+    "createdAt": "2024-12-26T15:27:43-03:00"
+  }'
+```
+
+### Get All Payroll Loan Events
+
+```bash
+curl -X GET http://localhost:5170/api/payroll-loans
+```
+
+## Run with Docker Compose
+
+```bash
+docker compose up -d
