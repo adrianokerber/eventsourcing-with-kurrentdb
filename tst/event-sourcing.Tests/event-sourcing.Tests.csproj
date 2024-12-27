@@ -29,7 +29,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\event-sourcing.Api\event-sourcing.csproj" />
+    <ProjectReference Include="..\..\src\event-sourcing.Api\event-sourcing.Api.csproj" />
   </ItemGroup>
 
 </Project>

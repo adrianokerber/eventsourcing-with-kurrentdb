@@ -1,6 +1,6 @@
 using System.Text;
 using System.Text.Json;
-using System.Threading;
+using CSharpFunctionalExtensions;
 
 namespace event_sourcing.Domain.PayrollLoan;
 using EventStore.Client;
@@ -8,7 +8,7 @@ using EventStore.Client;
 public class PayrollLoansRepository(EventStoreClient client)
 {
 
-    public async Task AppendEventAsync(string streamName, Event @event)
+    public async Task<Event> AppendEventAsync(string streamName, Event @event, CancellationToken cancellationToken = default)
     {
         var eventData = new EventData(
             Uuid.NewUuid(),
@@ -16,7 +16,9 @@ public class PayrollLoansRepository(EventStoreClient client)
             JsonSerializer.SerializeToUtf8Bytes(@event.Data),
             null);
 
-        await client.AppendToStreamAsync(streamName, StreamState.Any, new[] { eventData });
+        await client.AppendToStreamAsync(streamName, StreamState.Any, new[] { eventData }, cancellationToken: cancellationToken);
+
+        return @event with { Id = eventData.EventId.ToString() };
     }
 
     public async Task<List<Event>> GetEventsAsync(string streamName, CancellationToken cancellationToken = default)

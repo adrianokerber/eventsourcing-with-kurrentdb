@@ -2,7 +2,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.5.002.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "event-sourcing.Api", "src\event-sourcing.Api\event-sourcing.csproj", "{AB2E0B75-E909-4F1C-8027-0982F49B57C4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "event-sourcing.Api", "src\event-sourcing.Api\event-sourcing.Api.csproj", "{AB2E0B75-E909-4F1C-8027-0982F49B57C4}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "event-sourcing.Tests", "tst\event-sourcing.Tests\event-sourcing.Tests.csproj", "{5B2E0B75-E909-4F1C-8027-0982F49B57C5}"
 EndProject

@@ -1,6 +1,7 @@
 using event_sourcing.Domain.PayrollLoan;
 using event_sourcing.Domain.PayrollLoan.Features.GetPayrollLoans;
 using NSubstitute;
+using NSubstitute.ExceptionExtensions;
 using Xunit;
 
 namespace event_sourcing.Tests.Domain.PayrollLoan.Features.GetPayrollLoans;

@@ -36,3 +36,4 @@ curl -X GET http://localhost:5170/api/payroll-loans
 
 ```bash
 docker compose up -d
+```

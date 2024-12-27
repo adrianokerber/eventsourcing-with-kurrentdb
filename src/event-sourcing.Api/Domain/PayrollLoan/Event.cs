@@ -1,9 +1,9 @@
 namespace event_sourcing.Domain.PayrollLoan;
 
-public sealed class Event
+public sealed record Event
 {
-    public required string Id { get; set; }
-    public required string Type { get; set; }
-    public required string Data { get; set; }
-    public DateTime CreatedAt { get; set; }
+    public required string Id { get; init; }
+    public required string Type { get; init; }
+    public required string Data { get; init; }
+    public DateTime CreatedAt { get; init; }
 }
