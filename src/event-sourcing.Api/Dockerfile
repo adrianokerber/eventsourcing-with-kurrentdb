@@ -2,14 +2,14 @@ FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
 
 # Copy solution and project files first
-COPY ./event-sourcing.Api/event-sourcing.csproj .
+COPY ./src/event-sourcing.Api/event-sourcing.Api.csproj .
 
 # Restore dependencies
-RUN dotnet restore "event-sourcing.csproj"
+RUN dotnet restore "event-sourcing.Api.csproj"
 
 # Copy everything else and build
-COPY ./event-sourcing.Api/ .
-RUN dotnet publish "event-sourcing.csproj" -c Release -o /app/publish
+COPY ./src/event-sourcing.Api/ .
+RUN dotnet publish "event-sourcing.Api.csproj" -c Release -o /app/publish
 
 # Build runtime image
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS final
