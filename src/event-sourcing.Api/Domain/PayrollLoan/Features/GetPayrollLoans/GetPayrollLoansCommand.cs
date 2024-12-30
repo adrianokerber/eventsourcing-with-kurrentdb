@@ -26,7 +26,7 @@ public sealed class GetPayrollLoansCommandHandler : IRequestHandler<GetPayrollLo
     {
         try
         {
-            var events = await _repository.GetEventsAsync("sample-stream", cancellationToken);
+            var events = await _repository.GetEventsAsync(cancellationToken);
             return Result.Success<IEnumerable<Event>>(events);
         }
         catch (Exception ex)

@@ -7,8 +7,9 @@ using EventStore.Client;
 
 public class PayrollLoansRepository(EventStoreClient client)
 {
+    private const string StreamName = "payroll-loans";
 
-    public async Task<Event> AppendEventAsync(string streamName, Event @event, CancellationToken cancellationToken = default)
+    public async Task<Event> AppendEventAsync(Event @event, CancellationToken cancellationToken = default)
     {
         var eventData = new EventData(
             Uuid.NewUuid(),
@@ -16,15 +17,15 @@ public class PayrollLoansRepository(EventStoreClient client)
             JsonSerializer.SerializeToUtf8Bytes(@event.Data),
             null);
 
-        await client.AppendToStreamAsync(streamName, StreamState.Any, new[] { eventData }, cancellationToken: cancellationToken);
+        await client.AppendToStreamAsync(StreamName, StreamState.Any, new[] { eventData }, cancellationToken: cancellationToken);
 
         return @event with { Id = eventData.EventId.ToString() };
     }
 
-    public async Task<List<Event>> GetEventsAsync(string streamName, CancellationToken cancellationToken = default)
+    public async Task<List<Event>> GetEventsAsync(CancellationToken cancellationToken = default)
     {
         var events = new List<Event>();
-        var result = client.ReadStreamAsync(Direction.Forwards, streamName, StreamPosition.Start, cancellationToken: cancellationToken);
+        var result = client.ReadStreamAsync(Direction.Forwards, StreamName, StreamPosition.Start, cancellationToken: cancellationToken);
 
         await foreach (var resolvedEvent in result)
         {

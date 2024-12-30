@@ -5,20 +5,32 @@ namespace event_sourcing.Domain.PayrollLoan.Features.CreatePayrollLoan;
 
 public sealed record CreatePayrollLoanCommand : IRequest<Result<Event>>
 {
-    public Event Event { get; init; }
+    public string EventName { get; }
+    
+    public decimal Amount { get; }
+    public decimal InterestRate { get; }
+    public int NumberOfInstallments { get; }
 
-    private CreatePayrollLoanCommand(Event @event)
+    private CreatePayrollLoanCommand(decimal amount, decimal interestRate, int numberOfInstallments)
     {
-        Event = @event;
+        EventName = "PayrollLoanCreated";
+        Amount = amount;
+        InterestRate = interestRate;
+        NumberOfInstallments = numberOfInstallments;
     }
 
-    // TODO: the command must have its values instead of a 
-    public static Result<CreatePayrollLoanCommand> Create(Event @event)
+    public static Result<CreatePayrollLoanCommand> Create(decimal amount, decimal interestRate, int numberOfInstallments)
     {
-        if (@event is null || @event.Data is null)
-            return Result.Failure<CreatePayrollLoanCommand>("Invalid event");
+        if (amount < 100)
+            return Result.Failure<CreatePayrollLoanCommand>("Minimum amount of payroll loan is 100");
 
-        return new CreatePayrollLoanCommand(@event);
+        if (interestRate <= 1)
+            return Result.Failure<CreatePayrollLoanCommand>("Interest rate must be greater than 1");
+
+        if (numberOfInstallments < 1)
+            return Result.Failure<CreatePayrollLoanCommand>("Number of installments must be greater than 0");
+
+        return new CreatePayrollLoanCommand(amount, interestRate, numberOfInstallments);
     }
 }
 
@@ -35,7 +47,13 @@ public sealed class CreatePayrollLoanCommandHandler : IRequestHandler<CreatePayr
     {
         try
         {
-            var eventCreated = await _repository.AppendEventAsync("sample-stream", request.Event, cancellationToken);
+            var @event = new Event
+            {
+                Id = Guid.NewGuid().ToString(),
+                Type = "PayrollLoanCreated",
+                Data = request.ToString()
+            };
+            var eventCreated = await _repository.AppendEventAsync(@event, cancellationToken);
             
             return eventCreated;
         }

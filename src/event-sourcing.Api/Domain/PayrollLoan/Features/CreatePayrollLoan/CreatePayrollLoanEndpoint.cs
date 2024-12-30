@@ -14,15 +14,15 @@ public class CreatePayrollLoanEndpoint(IMediator mediator) : ControllerBase
     /// <summary>
     /// Creates a new payroll loan event
     /// </summary>
-    /// <param name="event">The event data</param>
+    /// <param name="request">The request data</param>
     /// <param name="cancellationToken"></param>
     /// <returns>The created event</returns>
     [HttpPost]
     [ProducesResponseType(typeof(Event), StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> PostEvent([FromBody] Event @event, CancellationToken cancellationToken)
+    public async Task<IActionResult> PostEvent([FromBody] Request request, CancellationToken cancellationToken)
     {
-        var command = CreatePayrollLoanCommand.Create(@event);
+        var command = CreatePayrollLoanCommand.Create(request.Amount, request.InterestRate, request.TermMonths);
         if (command.IsFailure)
             return BadRequest(command.Error);
         
@@ -30,7 +30,8 @@ public class CreatePayrollLoanEndpoint(IMediator mediator) : ControllerBase
         if (result.IsFailure)
             return BadRequest(result.Error);
 
-        //return Ok(result.Value);
         return CreatedAtAction("GetEvents", "GetPayrollLoansEndpoint", new { streamName = "sample-stream" }, result.Value);
     }
 }
+
+public record Request(decimal Amount, decimal InterestRate, int TermMonths);

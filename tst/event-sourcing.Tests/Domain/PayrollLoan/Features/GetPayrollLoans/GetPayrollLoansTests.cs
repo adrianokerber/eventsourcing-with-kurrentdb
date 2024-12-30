@@ -30,7 +30,7 @@ public class GetPayrollLoansTests
         };
 
         _repository
-            .GetEventsAsync("sample-stream", _cancellationToken)
+            .GetEventsAsync(_cancellationToken)
             .Returns(expectedEvents);
 
         var command = GetPayrollLoansCommand.Create();
@@ -43,7 +43,7 @@ public class GetPayrollLoansTests
         Assert.Equal(expectedEvents, result.Value);
         await _repository
             .Received(1)
-            .GetEventsAsync("sample-stream", _cancellationToken);
+            .GetEventsAsync(_cancellationToken);
     }
 
     [Fact]
@@ -52,7 +52,7 @@ public class GetPayrollLoansTests
         // Arrange
         var expectedException = new Exception("Test exception");
         _repository
-            .GetEventsAsync("sample-stream", _cancellationToken)
+            .GetEventsAsync(_cancellationToken)
             .Throws(expectedException);
 
         var command = GetPayrollLoansCommand.Create();
@@ -65,7 +65,7 @@ public class GetPayrollLoansTests
         Assert.Contains(expectedException.Message, result.Error);
         await _repository
             .Received(1)
-            .GetEventsAsync("sample-stream", _cancellationToken);
+            .GetEventsAsync(_cancellationToken);
     }
 
     [Fact]
