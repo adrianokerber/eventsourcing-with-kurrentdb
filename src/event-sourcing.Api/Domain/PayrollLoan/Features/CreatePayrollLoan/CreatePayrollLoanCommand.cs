@@ -1,9 +1,10 @@
 using CSharpFunctionalExtensions;
+using event_sourcing.Domain.PayrollLoan.Events;
 using MediatR;
 
 namespace event_sourcing.Domain.PayrollLoan.Features.CreatePayrollLoan;
 
-public sealed record CreatePayrollLoanCommand : IRequest<Result<Event>>
+public sealed record CreatePayrollLoanCommand : IRequest<Result<PayrollLoan>>
 {
     public string EventName { get; }
     
@@ -34,7 +35,7 @@ public sealed record CreatePayrollLoanCommand : IRequest<Result<Event>>
     }
 }
 
-public sealed class CreatePayrollLoanCommandHandler : IRequestHandler<CreatePayrollLoanCommand, Result<Event>>
+public sealed class CreatePayrollLoanCommandHandler : IRequestHandler<CreatePayrollLoanCommand, Result<PayrollLoan>>
 {
     private readonly PayrollLoansRepository _repository;
 
@@ -43,23 +44,34 @@ public sealed class CreatePayrollLoanCommandHandler : IRequestHandler<CreatePayr
         _repository = repository;
     }
 
-    public async Task<Result<Event>> Handle(CreatePayrollLoanCommand request, CancellationToken cancellationToken)
+    public async Task<Result<PayrollLoan>> Handle(CreatePayrollLoanCommand request, CancellationToken cancellationToken)
     {
-        try
-        {
-            var @event = new Event
-            {
-                Id = Guid.NewGuid().ToString(),
-                Type = "PayrollLoanCreated",
-                Data = request.ToString()
-            };
-            var eventCreated = await _repository.AppendEventAsync(@event, cancellationToken);
-            
-            return eventCreated;
-        }
-        catch (Exception ex)
-        {
-            return Result.Failure<Event>($"Failed to append payroll loan event: {ex.Message}");
-        }
+        var (_, isFailure, payrollLoan, error) = PayrollLoan.Create(request.Amount, request.InterestRate, request.NumberOfInstallments);
+        if (isFailure)
+            return Result.Failure<PayrollLoan>(error);
+
+        // TODO: this event could be created inside the Aggregate
+        var @event = new PayrollLoanCreated(payrollLoan.Id, payrollLoan.Amount, payrollLoan.InterestRate, payrollLoan.NumberOfInstallments);
+
+        await _repository.AppendEventAsync(@event, cancellationToken);
+        
+        return payrollLoan;
+        
+        // try
+        // {
+        //     var @event = new Event
+        //     {
+        //         Id = Guid.NewGuid().ToString(),
+        //         Type = "PayrollLoanCreated",
+        //         Data = request.ToString()
+        //     };
+        //     var eventCreated = await _repository.AppendEventAsync(@event, cancellationToken);
+        //     
+        //     return eventCreated;
+        // }
+        // catch (Exception ex)
+        // {
+        //     return Result.Failure<Event>($"Failed to append payroll loan event: {ex.Message}");
+        // }
     }
 }

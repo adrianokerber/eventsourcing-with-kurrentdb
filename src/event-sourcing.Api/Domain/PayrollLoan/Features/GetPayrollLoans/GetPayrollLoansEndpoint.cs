@@ -1,3 +1,5 @@
+using event_sourcing.Domain.PayrollLoan.Events;
+
 namespace event_sourcing.Domain.PayrollLoan.Features.GetPayrollLoans;
 
 using MediatR;

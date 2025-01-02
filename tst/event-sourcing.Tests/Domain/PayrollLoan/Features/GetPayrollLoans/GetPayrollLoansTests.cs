@@ -1,4 +1,5 @@
 using event_sourcing.Domain.PayrollLoan;
+using event_sourcing.Domain.PayrollLoan.Events;
 using event_sourcing.Domain.PayrollLoan.Features.GetPayrollLoans;
 using NSubstitute;
 using NSubstitute.ExceptionExtensions;
@@ -25,8 +26,8 @@ public class GetPayrollLoansTests
         // Arrange
         var expectedEvents = new List<Event>
         {
-            new() { Id = "1", Type = "Created", Data = "data1", CreatedAt = DateTime.UtcNow },
-            new() { Id = "2", Type = "Updated", Data = "data2", CreatedAt = DateTime.UtcNow }
+            new() { Id = "1", Type = "Created", Data = "data1", CreatedAtUtc = DateTime.UtcNow },
+            new() { Id = "2", Type = "Updated", Data = "data2", CreatedAtUtc = DateTime.UtcNow }
         };
 
         _repository

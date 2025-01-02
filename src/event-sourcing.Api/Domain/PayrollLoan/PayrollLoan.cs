@@ -2,30 +2,30 @@ namespace event_sourcing.Domain.PayrollLoan;
 
 using CSharpFunctionalExtensions;
 
-public sealed record PayrollLoan
+public sealed class PayrollLoan
 {
     private PayrollLoan(
         Guid id,
         decimal amount,
         decimal interestRate,
         int numberOfInstallments,
-        DateTime createdAt,
-        DateTime? updatedAt = null)
+        DateTime createdAtUtc,
+        DateTime? updatedAtUtc = null)
     {
         Id = id;
         Amount = amount;
         InterestRate = interestRate;
         NumberOfInstallments = numberOfInstallments;
-        CreatedAt = createdAt;
-        UpdatedAt = updatedAt;
+        CreatedAtUtc = createdAtUtc;
+        UpdatedAtUtc = updatedAtUtc;
     }
 
     public Guid Id { get; private init; }
     public decimal Amount { get; private init; }
     public decimal InterestRate { get; private init; }
     public int NumberOfInstallments { get; private init; }
-    public DateTime CreatedAt { get; private init; }
-    public DateTime? UpdatedAt { get; private init; }
+    public DateTime CreatedAtUtc { get; private init; }
+    public DateTime? UpdatedAtUtc { get; private init; }
 
     public static Result<PayrollLoan> Create(
         decimal amount,
@@ -49,8 +49,16 @@ public sealed record PayrollLoan
             amount: amount,
             interestRate: interestRate,
             numberOfInstallments: numberOfInstallments,
-            createdAt: DateTime.UtcNow);
+            createdAtUtc: DateTime.UtcNow);
+        
+        // TODO: add domain event here!
 
         return Result.Success(payrollLoan);
     }
+
+    // TODO: apply the concept of apply method to build the aggregate using the events
+    // private Apply(PayrollLoanCreated @event)
+    // {
+    //     Id = @event.Id;
+    // }
 }

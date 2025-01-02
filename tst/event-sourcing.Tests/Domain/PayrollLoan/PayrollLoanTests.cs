@@ -23,8 +23,8 @@ public class PayrollLoanTests
         Assert.Equal(interestRate, result.Value.InterestRate);
         Assert.Equal(numberOfInstallments, result.Value.NumberOfInstallments);
         Assert.NotEqual(Guid.Empty, result.Value.Id);
-        Assert.NotEqual(default, result.Value.CreatedAt);
-        Assert.Null(result.Value.UpdatedAt);
+        Assert.NotEqual(default, result.Value.CreatedAtUtc);
+        Assert.Null(result.Value.UpdatedAtUtc);
     }
 
     [Theory]
