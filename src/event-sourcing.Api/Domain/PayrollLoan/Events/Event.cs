@@ -7,7 +7,5 @@ namespace event_sourcing.Domain.PayrollLoan.Events;
 public abstract record Event
 {
     public abstract Guid StreamId { get; }
-    public abstract string Type { get; }
-    public abstract string Data { get; }
     public DateTime CreatedAtUtc { get; } = DateTime.UtcNow;
 }

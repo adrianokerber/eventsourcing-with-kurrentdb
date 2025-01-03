@@ -16,8 +16,8 @@ public class PayrollLoansRepository(EventStoreClient client)
     {
         var eventData = new EventData(
             Uuid.FromGuid(@event.StreamId),
-            @event.Type,
-            JsonSerializer.SerializeToUtf8Bytes(@event.Data),
+            @event.GetType().Name,
+            JsonSerializer.SerializeToUtf8Bytes(@event),
             null);
 
         await client.AppendToStreamAsync(StreamName(@event.StreamId), StreamState.Any, new[] { eventData }, cancellationToken: cancellationToken);
@@ -30,7 +30,7 @@ public class PayrollLoansRepository(EventStoreClient client)
 
         await foreach (var resolvedEvent in result)
         {
-            var @event = JsonSerializer.Deserialize<Event>(Encoding.UTF8.GetString(resolvedEvent.Event.Data.ToArray()), new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase });
+            var @event = JsonSerializer.Deserialize<Event>(resolvedEvent.Event.Data.ToString());
             events.Add(@event);
         }
 

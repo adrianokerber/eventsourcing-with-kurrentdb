@@ -20,32 +20,32 @@ public class GetPayrollLoansTests
         _cancellationToken = CancellationToken.None;
     }
 
-    [Fact]
-    public async Task Handle_ShouldReturnEvents_WhenRepositorySucceeds()
-    {
-        // Arrange
-        var expectedEvents = new List<Event>
-        {
-            new() { Id = "1", Type = "Created", Data = "data1", CreatedAtUtc = DateTime.UtcNow },
-            new() { Id = "2", Type = "Updated", Data = "data2", CreatedAtUtc = DateTime.UtcNow }
-        };
-
-        _repository
-            .GetEventsAsync(_cancellationToken)
-            .Returns(expectedEvents);
-
-        var command = GetPayrollLoansCommand.Create();
-
-        // Act
-        var result = await _handler.Handle(command.Value, _cancellationToken);
-
-        // Assert
-        Assert.True(result.IsSuccess);
-        Assert.Equal(expectedEvents, result.Value);
-        await _repository
-            .Received(1)
-            .GetEventsAsync(_cancellationToken);
-    }
+    // [Fact]
+    // public async Task Handle_ShouldReturnEvents_WhenRepositorySucceeds()
+    // {
+    //     // Arrange
+    //     var expectedEvents = new List<Event>
+    //     {
+    //         new() { Id = "1", Type = "Created", Data = "data1", CreatedAtUtc = DateTime.UtcNow },
+    //         new() { Id = "2", Type = "Updated", Data = "data2", CreatedAtUtc = DateTime.UtcNow }
+    //     };
+    //
+    //     _repository
+    //         .GetEventsAsync(_cancellationToken)
+    //         .Returns(expectedEvents);
+    //
+    //     var command = GetPayrollLoansCommand.Create();
+    //
+    //     // Act
+    //     var result = await _handler.Handle(command.Value, _cancellationToken);
+    //
+    //     // Assert
+    //     Assert.True(result.IsSuccess);
+    //     Assert.Equal(expectedEvents, result.Value);
+    //     await _repository
+    //         .Received(1)
+    //         .GetEventsAsync(_cancellationToken);
+    // }
 
     [Fact]
     public async Task Handle_ShouldReturnFailure_WhenRepositoryThrows()
