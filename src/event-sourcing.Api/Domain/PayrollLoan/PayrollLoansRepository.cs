@@ -25,18 +25,20 @@ public class PayrollLoansRepository(EventStoreClient client)
 
     public async Task<List<Event>> GetEventsAsync(CancellationToken cancellationToken = default)
     {
-        var events = new List<Event>();
         var result = client.ReadAllAsync(Direction.Forwards, Position.Start, StreamFilter.Prefix(StreamNamePrefix), cancellationToken: cancellationToken);
-
+        var events = new List<Event>();
         await foreach (var resolvedEvent in result)
         {
-            var @event = JsonSerializer.Deserialize<Event>(resolvedEvent.Event.Data.ToString());
+            if (resolvedEvent.Event.EventType.StartsWith("$")) continue;
+            
+            var @event = JsonSerializer.Deserialize<Event>(resolvedEvent.Event.Data.Span);
             events.Add(@event);
         }
-
+        
         return events;
     }
     
+    // TODO: construct a method that returns the aggregate in its current state using the events from the stream or via Projection
     /*
     public async Task<Maybe<PayrollLoan>> GetPayrollLoanAsync(string id, CancellationToken cancellationToken = default)
     {
