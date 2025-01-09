@@ -53,7 +53,7 @@ public class GetPayrollLoansTests
         // Arrange
         var expectedException = new Exception("Test exception");
         _repository
-            .GetEventsAsync(_cancellationToken)
+            .GetAllEventsAsync(_cancellationToken)
             .Throws(expectedException);
 
         var command = GetPayrollLoansCommand.Create();
@@ -66,7 +66,7 @@ public class GetPayrollLoansTests
         Assert.Contains(expectedException.Message, result.Error);
         await _repository
             .Received(1)
-            .GetEventsAsync(_cancellationToken);
+            .GetAllEventsAsync(_cancellationToken);
     }
 
     [Fact]
