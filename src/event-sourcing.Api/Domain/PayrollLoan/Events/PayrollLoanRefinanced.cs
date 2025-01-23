@@ -3,7 +3,7 @@ using event_sourcing.Domain.Shared;
 
 namespace event_sourcing.Domain.PayrollLoan.Events;
 
-public record PayrollLoanCreated(Guid PayrollLoanId, decimal Amount, decimal InterestRate, int NumberOfInstallments, DateTime CreatedAtUtc) : Event
+public record PayrollLoanRefinanced(Guid PayrollLoanId, decimal Amount, int NumberOfInstallments) : Event
 {
     [JsonIgnore]
     public override Guid StreamId => PayrollLoanId;

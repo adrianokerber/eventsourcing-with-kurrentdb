@@ -1,20 +1,16 @@
 using CSharpFunctionalExtensions;
-using event_sourcing.Domain.PayrollLoan.Events;
 using MediatR;
 
 namespace event_sourcing.Domain.PayrollLoan.Features.CreatePayrollLoan;
 
 public sealed record CreatePayrollLoanCommand : IRequest<Result<PayrollLoan>>
 {
-    public string EventName { get; }
-    
     public decimal Amount { get; }
     public decimal InterestRate { get; }
     public int NumberOfInstallments { get; }
 
     private CreatePayrollLoanCommand(decimal amount, decimal interestRate, int numberOfInstallments)
     {
-        EventName = "PayrollLoanCreated";
         Amount = amount;
         InterestRate = interestRate;
         NumberOfInstallments = numberOfInstallments;
@@ -50,28 +46,8 @@ public sealed class CreatePayrollLoanCommandHandler : IRequestHandler<CreatePayr
         if (isFailure)
             return Result.Failure<PayrollLoan>(error);
 
-        // TODO: this event could be created inside the Aggregate
-        var @event = new PayrollLoanCreated(payrollLoan.Id, payrollLoan.Amount, payrollLoan.InterestRate, payrollLoan.NumberOfInstallments);
-
-        await _repository.AppendEventAsync(@event, cancellationToken);
+        await _repository.Save(payrollLoan, cancellationToken);
         
         return payrollLoan;
-        
-        // try
-        // {
-        //     var @event = new Event
-        //     {
-        //         Id = Guid.NewGuid().ToString(),
-        //         Type = "PayrollLoanCreated",
-        //         Data = request.ToString()
-        //     };
-        //     var eventCreated = await _repository.AppendEventAsync(@event, cancellationToken);
-        //     
-        //     return eventCreated;
-        // }
-        // catch (Exception ex)
-        // {
-        //     return Result.Failure<Event>($"Failed to append payroll loan event: {ex.Message}");
-        // }
     }
 }

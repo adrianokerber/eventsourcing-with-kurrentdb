@@ -1,4 +1,5 @@
 using event_sourcing.Domain.PayrollLoan.Events;
+using event_sourcing.Domain.Shared;
 using MediatR;
 
 namespace event_sourcing.Domain.PayrollLoan.Features.CreatePayrollLoan;
@@ -23,7 +24,7 @@ public class CreatePayrollLoanEndpoint(IMediator mediator) : ControllerBase
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> PostEvent([FromBody] Request request, CancellationToken cancellationToken)
     {
-        var command = CreatePayrollLoanCommand.Create(request.Amount, request.InterestRate, request.TermMonths);
+        var command = CreatePayrollLoanCommand.Create(request.Amount, request.InterestRate, request.NumberOfInstallments);
         if (command.IsFailure)
             return BadRequest(command.Error);
         
@@ -35,4 +36,4 @@ public class CreatePayrollLoanEndpoint(IMediator mediator) : ControllerBase
     }
 }
 
-public record Request(decimal Amount, decimal InterestRate, int TermMonths);
+public record Request(decimal Amount, decimal InterestRate, int NumberOfInstallments);

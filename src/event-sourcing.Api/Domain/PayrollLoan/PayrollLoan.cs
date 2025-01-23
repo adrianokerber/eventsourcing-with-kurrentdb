@@ -1,31 +1,33 @@
+using event_sourcing.Domain.PayrollLoan.Events;
+using event_sourcing.Domain.Shared;
+
 namespace event_sourcing.Domain.PayrollLoan;
 
 using CSharpFunctionalExtensions;
 
 public sealed class PayrollLoan
 {
-    private PayrollLoan(
-        Guid id,
-        decimal amount,
-        decimal interestRate,
-        int numberOfInstallments,
-        DateTime createdAtUtc,
-        DateTime? updatedAtUtc = null)
+    public IReadOnlyList<Event> NewEvents => _newEvents;
+    private readonly List<Event> _newEvents = new List<Event>();
+
+    private PayrollLoan(Event payrollLoanEvent)
     {
-        Id = id;
-        Amount = amount;
-        InterestRate = interestRate;
-        NumberOfInstallments = numberOfInstallments;
-        CreatedAtUtc = createdAtUtc;
-        UpdatedAtUtc = updatedAtUtc;
+        _newEvents.Add(payrollLoanEvent);
+        Apply(payrollLoanEvent);
+    }
+    
+    public PayrollLoan(List<Event> domainEvents)
+    {
+        foreach (var @event in domainEvents)
+            Apply(@event);
     }
 
-    public Guid Id { get; private init; }
-    public decimal Amount { get; private init; }
-    public decimal InterestRate { get; private init; }
-    public int NumberOfInstallments { get; private init; }
-    public DateTime CreatedAtUtc { get; private init; }
-    public DateTime? UpdatedAtUtc { get; private init; }
+    public Guid Id { get; private set; }
+    public decimal Amount { get; private set; }
+    public decimal InterestRate { get; private set; }
+    public int NumberOfInstallments { get; private set; }
+    public DateTime CreatedAtUtc { get; private set; }
+    public DateTime? UpdatedAtUtc { get; private set; }
 
     public static Result<PayrollLoan> Create(
         decimal amount,
@@ -43,22 +45,51 @@ public sealed class PayrollLoan
 
         if (numberOfInstallments > 72)
             return Result.Failure<PayrollLoan>("Number of installments cannot exceed 72 months");
-
-        var payrollLoan = new PayrollLoan(
-            id: Guid.NewGuid(),
-            amount: amount,
-            interestRate: interestRate,
-            numberOfInstallments: numberOfInstallments,
-            createdAtUtc: DateTime.UtcNow);
         
-        // TODO: add domain event here!
+        // TODO: insert event on aggregate
+        var id = Guid.NewGuid();
+        var createdAtUtc = DateTime.UtcNow;
+        var @event = new PayrollLoanCreated(id, amount, interestRate, numberOfInstallments, createdAtUtc);
 
+        var payrollLoan = new PayrollLoan(@event);
+        
         return Result.Success(payrollLoan);
     }
 
-    // TODO: apply the concept of apply method to build the aggregate using the events
-    // private Apply(PayrollLoanCreated @event)
-    // {
-    //     Id = @event.Id;
-    // }
+    public void Refinance(decimal amount, int numberOfInstallments)
+    {
+        var @event = new PayrollLoanRefinanced(Id, amount, numberOfInstallments);
+        
+        _newEvents.Add(@event);
+        Apply(@event);
+    }
+    
+    private void Apply(Event @event)
+    {
+        // TODO: Remove necessity of writing every type
+        switch (@event)
+        {
+            case PayrollLoanCreated ev:
+                Apply(ev);
+                break;
+            case PayrollLoanRefinanced ev:
+                Apply(ev);
+                break;
+        }
+    }
+
+    private void Apply(PayrollLoanCreated @event)
+    {
+        Id = @event.PayrollLoanId;
+        Amount = @event.Amount;
+        InterestRate = @event.InterestRate;
+        NumberOfInstallments = @event.NumberOfInstallments;
+        CreatedAtUtc = @event.CreatedAtUtc;
+    }
+
+    private void Apply(PayrollLoanRefinanced @event)
+    {
+        Amount = @event.Amount;
+        NumberOfInstallments = @event.NumberOfInstallments;
+    }
 }

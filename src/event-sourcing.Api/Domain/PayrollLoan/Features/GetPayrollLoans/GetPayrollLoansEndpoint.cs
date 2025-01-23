@@ -1,4 +1,5 @@
 using event_sourcing.Domain.PayrollLoan.Events;
+using event_sourcing.Domain.Shared;
 
 namespace event_sourcing.Domain.PayrollLoan.Features.GetPayrollLoans;
 
@@ -21,7 +22,7 @@ public class GetPayrollLoansEndpoint(IMediator mediator) : ControllerBase
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> GetEvents(CancellationToken cancellationToken)
     {
-        var command = GetPayrollLoansCommand.Create();
+        var command = GetPayrollLoansQuery.Create();
         if (command.IsFailure)
             return BadRequest(command.Error);
 

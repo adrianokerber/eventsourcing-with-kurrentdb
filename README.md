@@ -36,4 +36,8 @@ curl -X GET http://localhost:5170/api/payroll-loans
 
 ```bash
 docker compose up -d
+# If you want to rebuild images
+docker compose up -d --build
+# If you want to run eventstore separately
+docker compose up -d --no-deps eventstore
 ```
