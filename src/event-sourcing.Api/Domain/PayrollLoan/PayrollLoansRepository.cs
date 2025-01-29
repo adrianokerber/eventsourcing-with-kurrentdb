@@ -30,6 +30,7 @@ public class PayrollLoansRepository(EventStoreClient client)
         await client.AppendToStreamAsync(StreamName(@event.StreamId), StreamState.Any, new[] { eventData }, cancellationToken: cancellationToken);
     }
 
+    // TODO: improve to use a projection instead of requesting all events to see the current state of all aggregates
     public async Task<List<PayrollLoan>> GetAllPayrollLoansAsync(CancellationToken cancellationToken = default)
     {
         var events = await GetAllEventsAsync(cancellationToken);
@@ -62,10 +63,10 @@ public class PayrollLoansRepository(EventStoreClient client)
         return events;
     }
     
-    public async Task<Maybe<PayrollLoan>> GetPayrollLoanAsync(Guid loanId)
+    public async Task<Maybe<PayrollLoan>> GetPayrollLoanByIdAsync(Guid loanId, CancellationToken cancellationToken = default)
     {
         // Load events from the event store
-        var events = await GetEventsByLoanIdAsync(loanId);
+        var events = await GetEventsByLoanIdAsync(loanId, cancellationToken: cancellationToken);
         if (events.Count == 0)
             return Maybe<PayrollLoan>.None;
 
@@ -74,9 +75,9 @@ public class PayrollLoansRepository(EventStoreClient client)
         return payrollLoan;
     }
 
-    private async Task<List<Event>> GetEventsByLoanIdAsync(Guid loanId)
+    private async Task<List<Event>> GetEventsByLoanIdAsync(Guid loanId, CancellationToken cancellationToken = default)
     {
-        var result = client.ReadStreamAsync(Direction.Forwards, StreamName(loanId), StreamPosition.Start);
+        var result = client.ReadStreamAsync(Direction.Forwards, StreamName(loanId), StreamPosition.Start, cancellationToken: cancellationToken);
         if (await result.ReadState == ReadState.StreamNotFound)
             return new List<Event>();
 

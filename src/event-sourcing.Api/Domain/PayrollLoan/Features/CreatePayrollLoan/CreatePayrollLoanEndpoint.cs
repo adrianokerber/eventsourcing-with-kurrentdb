@@ -7,20 +7,20 @@ namespace event_sourcing.Domain.PayrollLoan.Features.CreatePayrollLoan;
 using Microsoft.AspNetCore.Mvc;
 
 /// <summary>
-/// Endpoint for creating payroll loan events
+/// Endpoint for creating payroll loans
 /// </summary>
 [ApiController]
 [Route("api/payroll-loans")]
 public class CreatePayrollLoanEndpoint(IMediator mediator) : ControllerBase
 {
     /// <summary>
-    /// Creates a new payroll loan event
+    /// Creates a new payroll loan
     /// </summary>
     /// <param name="request">The request data</param>
     /// <param name="cancellationToken"></param>
-    /// <returns>The created event</returns>
+    /// <returns>The created payroll-loan</returns>
     [HttpPost]
-    [ProducesResponseType(typeof(Event), StatusCodes.Status201Created)]
+    [ProducesResponseType(typeof(PayrollLoan), StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> PostEvent([FromBody] Request request, CancellationToken cancellationToken)
     {
@@ -32,7 +32,7 @@ public class CreatePayrollLoanEndpoint(IMediator mediator) : ControllerBase
         if (result.IsFailure)
             return BadRequest(result.Error);
 
-        return CreatedAtAction("GetEvents", "GetPayrollLoansEndpoint", new { streamName = "sample-stream" }, result.Value);
+        return CreatedAtAction("GetPayrollLoanById", "GetPayrollLoanByIdEndpoint", new { id = result.Value.Id }, result.Value);
     }
 }
 

@@ -37,13 +37,13 @@ public sealed class RefinancePayrollLoanCommandHandler : IRequestHandler<Refinan
         _repository = repository;
     }
 
-    public async Task<Result<PayrollLoan>> Handle(RefinancePayrollLoanCommand request, CancellationToken cancellationToken)
+    public async Task<Result<PayrollLoan>> Handle(RefinancePayrollLoanCommand command, CancellationToken cancellationToken)
     {
-        var payrollLoan = await _repository.GetPayrollLoanAsync(request.Id);
+        var payrollLoan = await _repository.GetPayrollLoanByIdAsync(command.Id);
         if (payrollLoan.HasNoValue)
             return Result.Failure<PayrollLoan>("Payroll loan not found");
 
-        payrollLoan.Value.Refinance(request.Amount, request.NumberOfInstallments);
+        payrollLoan.Value.Refinance(command.Amount, command.NumberOfInstallments);
         
         await _repository.Save(payrollLoan.Value, cancellationToken);
         return payrollLoan.Value;

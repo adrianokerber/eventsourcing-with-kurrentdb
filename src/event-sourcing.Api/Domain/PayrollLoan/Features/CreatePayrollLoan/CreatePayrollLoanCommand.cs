@@ -40,9 +40,9 @@ public sealed class CreatePayrollLoanCommandHandler : IRequestHandler<CreatePayr
         _repository = repository;
     }
 
-    public async Task<Result<PayrollLoan>> Handle(CreatePayrollLoanCommand request, CancellationToken cancellationToken)
+    public async Task<Result<PayrollLoan>> Handle(CreatePayrollLoanCommand command, CancellationToken cancellationToken)
     {
-        var (_, isFailure, payrollLoan, error) = PayrollLoan.Create(request.Amount, request.InterestRate, request.NumberOfInstallments);
+        var (_, isFailure, payrollLoan, error) = PayrollLoan.Create(command.Amount, command.InterestRate, command.NumberOfInstallments);
         if (isFailure)
             return Result.Failure<PayrollLoan>(error);
 

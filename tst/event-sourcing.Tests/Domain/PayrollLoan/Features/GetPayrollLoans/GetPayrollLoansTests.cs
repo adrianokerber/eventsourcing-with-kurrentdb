@@ -1,6 +1,6 @@
 using event_sourcing.Domain.PayrollLoan;
 using event_sourcing.Domain.PayrollLoan.Events;
-using event_sourcing.Domain.PayrollLoan.Features.GetPayrollLoans;
+using event_sourcing.Domain.PayrollLoan.Features.GetAllPayrollLoans;
 using NSubstitute;
 using NSubstitute.ExceptionExtensions;
 using Xunit;
@@ -10,13 +10,13 @@ namespace event_sourcing.Tests.Domain.PayrollLoan.Features.GetPayrollLoans;
 public class GetPayrollLoansTests
 {
     private readonly PayrollLoansRepository _repository;
-    private readonly GetPayrollLoansQueryHandler _handler;
+    private readonly GetAllPayrollLoansQueryHandler _handler;
     private readonly CancellationToken _cancellationToken;
 
     public GetPayrollLoansTests()
     {
         _repository = Substitute.For<PayrollLoansRepository>();
-        _handler = new GetPayrollLoansQueryHandler(_repository);
+        _handler = new GetAllPayrollLoansQueryHandler(_repository);
         _cancellationToken = CancellationToken.None;
     }
 
@@ -34,7 +34,7 @@ public class GetPayrollLoansTests
     //         .GetEventsAsync(_cancellationToken)
     //         .Returns(expectedEvents);
     //
-    //     var command = GetPayrollLoansQuery.Create();
+    //     var command = GetAllPayrollLoansQuery.Create();
     //
     //     // Act
     //     var result = await _handler.Handle(command.Value, _cancellationToken);
@@ -56,7 +56,7 @@ public class GetPayrollLoansTests
     //         .GetAllEventsAsync(_cancellationToken)
     //         .Throws(expectedException);
     //
-    //     var command = GetPayrollLoansQuery.Create();
+    //     var command = GetAllPayrollLoansQuery.Create();
     //
     //     // Act
     //     var result = await _handler.Handle(command.Value, _cancellationToken);
@@ -73,7 +73,7 @@ public class GetPayrollLoansTests
     public void Create_ShouldReturnSuccessfulCommand()
     {
         // Act
-        var result = GetPayrollLoansQuery.Create();
+        var result = GetAllPayrollLoansQuery.Create();
 
         // Assert
         Assert.True(result.IsSuccess);

@@ -8,19 +8,19 @@ namespace event_sourcing.Domain.PayrollLoan.Features.RefinancePayrollLoan;
 using Microsoft.AspNetCore.Mvc;
 
 /// <summary>
-/// Endpoint for creating payroll loan events
+/// Endpoint for refinance a payroll loan
 /// </summary>
 [ApiController]
 [Route("api/payroll-loans/")]
 public class RefinancePayrollLoanEndpoint(IMediator mediator) : ControllerBase
 {
     /// <summary>
-    /// Refinances a new payroll loan event
+    /// Refinances a new payroll loan
     /// </summary>
     /// <param name="id">The ID of the resource</param>
     /// <param name="request">The request data</param>
     /// <param name="cancellationToken"></param>
-    /// <returns>The Refinanced event</returns>
+    /// <returns>The Refinanced payroll-loan</returns>
     [HttpPost]
     [Route("{id:guid}")]
     [ProducesResponseType(typeof(PayrollLoan), StatusCodes.Status200OK)]
